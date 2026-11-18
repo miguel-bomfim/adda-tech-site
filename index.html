@@ -78,7 +78,7 @@
 
     document.addEventListener('DOMContentLoaded', async function () {
       const loading = document.getElementById('__bundler_loading');
-      function setStatus(msg) {if (loading) loading.textContent = msg;}
+      function setStatus(msg) { if (loading) loading.textContent = msg; }
 
       const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
       const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
@@ -137,15 +137,15 @@
           ['#6b6b68', '#7790a8'],
           ['#1f1f1f', '#d6e5f2'],
           ['#262626', '#c9dff0'],
-      ['#c9c9c5', '#284b6a'],
-      [
-        '[AJUSTE: uma frase sobre o seu diferencial]',
-        'Unimos estratégia, design e desenvolvimento para entregar soluções digitais simples de usar e prontas para evoluir.'
-      ],
-      [
-        '[AJUSTE: um parágrafo curto com a história ou os valores da empresa]',
-        'Trabalhamos com proximidade, transparência e foco no resultado. Cada projeto é desenvolvido de acordo com a realidade da empresa, com comunicação clara do início ao suporte pós-entrega.'
-      ]
+          ['#c9c9c5', '#284b6a'],
+          [
+            '[AJUSTE: uma frase sobre o seu diferencial]',
+            'Unimos estratégia, design e desenvolvimento para entregar soluções digitais simples de usar e prontas para evoluir.'
+          ],
+          [
+            '[AJUSTE: um parágrafo curto com a história ou os valores da empresa]',
+            'Trabalhamos com proximidade, transparência e foco no resultado. Cada projeto é desenvolvido de acordo com a realidade da empresa, com comunicação clara do início ao suporte pós-entrega.'
+          ]
         ];
         for (const [from, to] of brandReplacements) {
           template = template.split(from).join(to);
@@ -184,7 +184,7 @@
         const pendingFrames = {}; // uuid -> [{el, frag}] awaiting text for own frames
         const pendingRelays = {}; // uuid -> [childWindow] awaiting text to pass down
         function mountPage(el, frag, text) {
-          const pageBlob = new Blob([text], {type: 'text/html'});
+          const pageBlob = new Blob([text], { type: 'text/html' });
           const u = URL.createObjectURL(pageBlob);
           resourceBlobs[u] = pageBlob;
           el.src = u + frag;
@@ -197,14 +197,14 @@
           delete pendingRelays[uuid];
           if (relays) {
             for (const cw of relays) {
-              try {cw.postMessage({__bundler_page: uuid, __bundler_text: text}, OWN_TARGET);} catch (err) { /* gone */}
+              try { cw.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
             }
           }
         }
         function ownFrameWindows() {
           const out = [];
           for (const f of Array.from(document.querySelectorAll('iframe'))) {
-            try {if (f.contentWindow) out.push(f.contentWindow);} catch (err) { /* detached */}
+            try { if (f.contentWindow) out.push(f.contentWindow); } catch (err) { /* detached */ }
           }
           return out;
         }
@@ -218,7 +218,7 @@
             const uuid = d.__bundler_need;
             const text = pageTexts[uuid];
             if (typeof text === 'string') {
-              try {e.source.postMessage({__bundler_page: uuid, __bundler_text: text}, OWN_TARGET);} catch (err) { /* gone */}
+              try { e.source.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
               return;
             }
             if (isPageRoot || window.parent === window) return; // authoritative miss
@@ -232,7 +232,7 @@
             // relays are dropped rather than remembered.
             if (Object.keys(pendingRelays).length >= 128) return;
             pendingRelays[uuid] = [e.source];
-            window.parent.postMessage({__bundler_need: uuid}, OWN_TARGET);
+            window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
           } else if (
             typeof d.__bundler_page === 'string' &&
             UUID_SHAPE.test(d.__bundler_page) &&
@@ -271,14 +271,14 @@
                 const chunks = [];
                 let totalLen = 0;
                 while (true) {
-                  const {done, value} = await reader.read();
+                  const { done, value } = await reader.read();
                   if (done) break;
                   chunks.push(value);
                   totalLen += value.length;
                 }
                 finalBytes = new Uint8Array(totalLen);
                 let offset = 0;
-                for (const chunk of chunks) {finalBytes.set(chunk, offset); offset += chunk.length;}
+                for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
               } else {
                 console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
               }
@@ -293,13 +293,13 @@
               blobUrls[uuid] = 'data:' + entry.mime + ';base64,' +
                 (entry.compressed ? toBase64(finalBytes) : entry.data);
             } else {
-              const blob = new Blob([finalBytes], {type: entry.mime});
+              const blob = new Blob([finalBytes], { type: entry.mime });
               blobUrls[uuid] = URL.createObjectURL(blob);
               resourceBlobs[blobUrls[uuid]] = blob;
             }
           } catch (err) {
             console.error('Failed to decode asset ' + uuid + ':', err);
-            const blob = new Blob([], {type: entry.mime});
+            const blob = new Blob([], { type: entry.mime });
             blobUrls[uuid] = URL.createObjectURL(blob);
             resourceBlobs[blobUrls[uuid]] = blob;
           }
@@ -331,6 +331,12 @@
         }
 
         const doc = new DOMParser().parseFromString(template, 'text/html');
+
+        const favicon = doc.createElement('link');
+        favicon.rel = 'icon';
+        favicon.type = 'image/png';
+        favicon.href = 'favicon.png';
+        doc.head.appendChild(favicon);
 
         const supportHeading = Array.from(doc.querySelectorAll('#servicos h3'))
           .find((heading) => heading.textContent.trim() === 'Suporte e consultoria');
@@ -387,11 +393,11 @@
             '</svg>';
         }
 
-    const copyright = doc.querySelector('footer span');
-    if (copyright) {
-      copyright.textContent =
-        '© 2026 Adda Tech · CNPJ 52.692.519/0001-81 · Todos os direitos reservados.';
-    }
+        const copyright = doc.querySelector('footer span');
+        if (copyright) {
+          copyright.textContent =
+            '© 2026 Adda Tech · CNPJ 52.692.519/0001-81 · Todos os direitos reservados.';
+        }
 
         document.documentElement.replaceWith(doc.documentElement);
 
@@ -406,12 +412,12 @@
               mountPage(el, m[2] || '', text);
             } else if (window.parent !== window && !isPageRoot) {
               const had = pendingFrames[m[1]];
-              (pendingFrames[m[1]] = had || []).push({el: el, frag: m[2] || ''});
+              (pendingFrames[m[1]] = had || []).push({ el: el, frag: m[2] || '' });
               if (!had) needed.push(m[1]);
             }
           }
           for (const uuid of needed) {
-            window.parent.postMessage({__bundler_need: uuid}, OWN_TARGET);
+            window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
           }
         }
 
@@ -426,7 +432,7 @@
             s.textContent = pre ? await pre.text() : await (await fetch(s.src)).text();
             s.removeAttribute('src');
           }
-          const p = s.src ? new Promise(function (r) {s.onload = s.onerror = r;}) : null;
+          const p = s.src ? new Promise(function (r) { s.onload = s.onerror = r; }) : null;
           old.replaceWith(s);
           if (p) await p;
         }
